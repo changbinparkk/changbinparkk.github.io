@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="2025년 최신 기준 육군, 해군, 공군, 사회복무요원 월급 및 군적금 계산기. 조기진급, 진급누락, 우대금리까지 완벽 반영.">
+    <meta name="keywords" content="군적금, 군적금 계산기, 군인 월급, 장병내일준비적금, 매칭지원금, 육군, 해군, 공군, 사회복무요원, 공익, 전역일 계산기">
+    <meta property="og:title" content="스마트 군적금 & 월급 계산기 (전군 통합)">
+    <meta property="og:description" content="육/해/공/공익 모두 가능! 단 3초 만에 나의 전역일과 적금 수령액을 계산해 보세요.">
+    
+    <meta name="google-site-verification" content="인증코드를_여기에_붙여넣으세요" />
+    
+    <title>스마트 군적금 & 월급 계산기</title>
+    <style>
+        :root {
+            --primary: #0033CC; 
+            --primary-hover: #002299;
+            --accent: #E6005C;
+            --bg-color: #F4F7FB;
+            --surface: #FFFFFF;
+            --text-main: #111827;
+            --text-sub: #4B5563;
+            --border-color: #D1D5DB;
+        }
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .calculator-container {
+            background: var(--surface);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 51, 204, 0.08);
+            width: 100%;
+            max-width: 460px;
+        }
+        h2 {
+            text-align: center;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 24px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+        input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            box-sizing: border-box;
+            background-color: #FAFAFA;
+        }
+        .flex-row {
+            display: flex;
+            gap: 12px;
+        }
+        .flex-row > div {
+            flex: 1;
+        }
+        .date-display-box {
+            background-color: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .date-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-sub);
+        }
+        .date-row.final {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #CBD5E1;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .date-val {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            background-color: #F8FAFC;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #E2E8F0;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .checkbox-group input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        .result-box {
+            margin-top: 24px;
+            padding: 24px;
+            background-color: #F0F4FF;
+            border-radius: 16px;
+            border: 2px solid #D6E4FF;
+            display: none;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .result-item.highlight { color: var(--accent); font-weight: 700; }
+        .result-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #ADC6FF;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .note {
+            font-size: 11px;
+            color: #6B7280;
+            margin-top: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-container">
+    <h2>🪖 스마트 군적금 계산기</h2>
+    
+    <div class="section-title">복무 정보 선택</div>
+    <div class="form-group">
+        <label>복무 형태</label>
+        <select id="service-type">
+            <option value="army" selected>육군/해병대/카투사 (18개월)</option>
+            <option value="navy">해군 (20개월)</option>
+            <option value="airforce">공군 (21개월)</option>
+            <option value="public">사회복무요원 (21개월)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>입대일</label>
+        <input type="date" id="date-enlist">
+    </div>
+    
+    <div class="flex-row">
+        <div class="form-group">
+            <label>상병 진급</label>
+            <select id="cpl-adjust">
+                <option value="-2">조기 2개월</option>
+                <option value="-1">조기 1개월</option>
+                <option value="0" selected>정상 진급</option>
+                <option value="1">누락 1개월</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>병장 진급</label>
+            <select id="sgt-adjust">
+                <option value="-2">조기 2개월</option>
+                <option value="-1">조기 1개월</option>
+                <option value="0" selected>정상 진급</option>
+                <option value="1">누락 1개월</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="date-display-box" id="date-display">
+        <div class="date-row"><span>상병 진급일:</span> <span class="date-val" id="disp-cpl">-</span></div>
+        <div class="date-row"><span>병장 진급일:</span> <span class="date-val" id="disp-sgt">-</span></div>
+        <div class="date-row final"><span>🎉 전역일:</span> <span class="date-val" id="disp-discharge">-</span></div>
+    </div>
+
+    <div class="section-title">적금 설정 (월 최대 55만원)</div>
+    <div class="flex-row">
+        <div class="form-group">
+            <label>은행 1 (최대 30만)</label>
+            <select id="bank1-amt">
+                <option value="300000" selected>30만원</option>
+                <option value="200000">20만원</option>
+                <option value="100000">10만원</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>은행 2</label>
+            <select id="bank2-amt">
+                <option value="250000" selected>25만원</option>
+                <option value="200000">20만원</option>
+                <option value="100000">10만원</option>
+                <option value="0">가입 안함</option>
+            </select>
+        </div>
+    </div>
+
+    <label class="checkbox-group">
+        <input type="checkbox" id="preferential-rate" checked>
+        <span style="font-size: 13px; font-weight: 700; color: var(--text-sub);">최고 우대금리 적용 (약 5.5%~5.7%)</span>
+    </label>
+
+    <button onclick="calculate()">나의 수령액 확인하기</button>
+
+    <div class="result-box" id="result-box">
+        <div class="result-item"><span>총 복무 개월:</span> <span id="res-months">-</span></div>
+        <div class="result-item"><span>예상 총 월급:</span> <span id="res-salary">0원</span></div>
+        <hr style="border: 0; border-top: 1px solid #D6E4FF; margin: 16px 0;">
+        <div class="result-item"><span>납입 원금:</span> <span id="res-principal">0원</span></div>
+        <div class="result-item highlight"><span>정부 매칭지원금 (100%):</span> <span id="res-matching">0원</span></div>
+        <div class="result-item"><span>은행 이자 (비과세):</span> <span id="res-interest">0원</span></div>
+        <div class="result-total"><span>전역 시 적금 수령액:</span> <span id="res-total">0원</span></div>
+        <p class="note">* 24~25년도 월급 기준 / 사회복무요원은 계급 호칭 대신 해당 기간 급여로 계산됩니다.</p>
+    </div>
+</div>
+
+<script>
+    const SALARY = { pv2: 640000, pfc: 800000, cpl: 1000000, sgt: 1250000 };
+    const SERVICE_PERIODS = { army: 18, navy: 20, airforce: 21, public: 21 };
+
+    function updateSchedule() {
+        const eVal = document.getElementById('date-enlist').value;
+        if (!eVal) return;
+        const eDate = new Date(eVal);
+        const type = document.getElementById('service-type').value;
+        const period = SERVICE_PERIODS[type];
+
+        // 전역일 계산
+        const dDate = new Date(eDate);
+        dDate.setMonth(dDate.getMonth() + period);
+        dDate.setDate(dDate.getDate() - 1);
+
+        const cplAdj = parseInt(document.getElementById('cpl-adjust').value);
+        const sgtAdj = parseInt(document.getElementById('sgt-adjust').value);
+
+        // 진급일 (매월 1일 기준)
+        const cDate = new Date(eDate.getFullYear(), eDate.getMonth() + 8 + cplAdj, 1);
+        const sDate = new Date(eDate.getFullYear(), eDate.getMonth() + 14 + sgtAdj, 1);
+
+        document.getElementById('disp-cpl').innerText = `${cDate.getFullYear()}년 ${cDate.getMonth()+1}월 1일`;
+        document.getElementById('disp-sgt').innerText = `${sDate.getFullYear()}년 ${sDate.getMonth()+1}월 1일`;
+        document.getElementById('disp-discharge').innerText = `${dDate.getFullYear()}년 ${dDate.getMonth()+1}월 ${dDate.getDate()}일`;
+    }
+
+    document.getElementById('date-enlist').addEventListener('change', updateSchedule);
+    document.getElementById('service-type').addEventListener('change', updateSchedule);
+    document.querySelectorAll('select').forEach(s => s.addEventListener('change', updateSchedule));
+
+    function calculate() {
+        const eVal = document.getElementById('date-enlist').value;
+        if (!eVal) { alert("입대일을 입력해주세요!"); return; }
+
+        const type = document.getElementById('service-type').value;
+        const total = SERVICE_PERIODS[type];
+        const cplAdj = parseInt(document.getElementById('cpl-adjust').value);
+        const sgtAdj = parseInt(document.getElementById('sgt-adjust').value);
+
+        // 군별 계급 기간 산정
+        const pv2 = 2;
+        const pfc = 6 + cplAdj;
+        const cpl = 6 - cplAdj + sgtAdj;
+        const sgt = total - (pv2 + pfc + cpl);
+
+        const totalSalary = (pv2 * SALARY.pv2) + (pfc * SALARY.pfc) + (cpl * SALARY.cpl) + (sgt * SALARY.sgt);
+
+        const amt1 = parseInt(document.getElementById('bank1-amt').value);
+        const amt2 = parseInt(document.getElementById('bank2-amt').value);
+        const monthly = amt1 + amt2;
+
+        if (monthly > 550000) { alert("월 최대 한도는 55만원입니다!"); return; }
+
+        const principal = monthly * total;
+        const matching = principal; // 100% 매칭
+        const rate = document.getElementById('preferential-rate').checked ? 5.6 : 5.0;
+        
+        let interest = 0;
+        for (let i = total; i > 0; i--) {
+            interest += monthly * (rate / 100) * (i / 12);
+        }
+
+        document.getElementById('res-months').innerText = `${total}개월`;
+        document.getElementById('res-salary').innerText = totalSalary.toLocaleString() + "원";
+        document.getElementById('res-principal').innerText = principal.toLocaleString() + "원";
+        document.getElementById('res-matching').innerText = matching.toLocaleString() + "원";
+        document.getElementById('res-interest').innerText = Math.floor(interest).toLocaleString() + "원";
+        document.getElementById('res-total').innerText = Math.floor(principal + matching + interest).toLocaleString() + "원";
+        document.getElementById('result-box').style.display = 'block';
+    }
+</script>
+</body>
+</html>
